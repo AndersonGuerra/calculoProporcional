@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>PriProgram</title>
+    <script src="./js/vue.js"></script>
+    <script src="./js/jsCalendar.min.js"></script>
+    <script src="./js/jsCalendar.lang.pt.js"></script>
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <link rel="stylesheet" href="./css/jsCalendar.min.css">
+</head>
+<!--
+    CALCULO DE VALOR PROPORCIONAL
+
+    mesComercial = 30;
+    resultado = valorAtividade/mesComercial
+    diasAteVencimento = (qtdMes+10)-diaAtual
+    valorProporcional = resultado*diasAteVencimento
+-->
+
+<body>
+    <div class="container" style="margin-bottom: 15px;">
+        <div class="row" style="margin-top: 10px;">
+            <div class="col-md-12 text-center">
+                <h1>Calculo de Valor Proporcional</h1>
+            </div>
+        </div>
+        <div id="app" class="row">
+            <div class="col-md-5 offset-md-1">
+                <form>
+                    <div class="form-group row">
+                        <label for="" class="col-md-4 col-form-label">Mês Comercial</label>
+                        <div class="col-md-8">
+                            <input type="number" v-model="mesComercial" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="" class="col-md-4 col-form-label">Valor Atividade</label>
+                        <div class="col-md-8">
+                            <input type="number" v-model="valorAtividade" class="form-control">
+                        </div>
+                    </div>
+
+                </form>
+                <h4> <span class="badge badge-success">Resultado: {{ resultado }}</span></h4>
+                <h4><span class="badge badge-success">Dias até vencimento: {{ diasVencimento }}</span></h4>
+                <h4><span class="badge badge-success">Valor proporcional: {{ valorProporcional }}</span></h4>
+                <!--
+                <div class="form-group row">
+                    <button style="margin-left: 5px; margin-right: 5px;" class="btn btn-default" 
+                        v-on:click="diasAteVencimento">Atualizar</button>
+                </div>
+                -->
+            </div>
+            <div class="col-md-5 offset-md-1">
+                <div id="calendar" class="material-theme"></div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            mesComercial: 30,
+            valorAtividade: 0,
+            diasVencimento: 0,
+        },
+        methods: {
+            diasAteVencimento: function () {
+                //diasAteVencimento = (qtdMes+10)-diaAtual;
+                //qtdMes = total de dias do mes atual;
+                let date = new Date();
+                let daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate() // - date.getDate();
+                this.diasVencimento = (daysInMonth + 10) - date.getDate();
+            }
+        },
+        computed: {
+            resultado: function () {
+                return this.valorAtividade / this.mesComercial;
+            },
+            valorProporcional: function () {
+                return this.resultado * this.diasVencimento;
+            }
+        },
+        mounted() {
+            // executa a função assim que a página abre
+
+            // executa a função para obter a qtd de dias até o vencimento
+            this.diasAteVencimento();
+            // pega o elemento com a id calendar
+            let calendarHtml = document.getElementById('calendar');
+            // cria uma variavel que vai pegar a data do vencimento
+            let dataVencimento = new Date();
+            dataVencimento.setDate(dataVencimento.getDate() + this.diasVencimento);
+            // cria um calendario usando o calendarHtml e a data de vencimento
+            jsCalendar.new(calendarHtml, dataVencimento, {
+                language: "pt"
+            });
+        },
+    })
+</script>
+
+</html>
